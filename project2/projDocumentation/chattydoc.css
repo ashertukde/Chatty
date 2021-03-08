@@ -1,0 +1,14 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.header {
+    margin: 15px;
+}
+
+.questions {
+    margin: 50px;
+    font-size: 20px;
+}
