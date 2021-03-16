@@ -29,12 +29,18 @@
                         We can see this when we run our Python code a "__pychache__" folder is created. In this folder contains the binary files for our code with the extension ".pyc" meaning that 
                         the code was interpreted with the C language. 
                     </p>
-                    <p>JavaScript is also an interpreted language and its interpreter is created using C++.
+                    <p>JavaScript is also an interpreted language, but there are multiple interpreters, usually for each browser. For example, Google Chrome uses their 
+                        V8 engine that was created by Google using C++. The Mozilla Foundation created the Rhino engine that was developed entirely in Java. This is why
+                        JavaScript may behave differently in some browsers. More about JavaScript can be found <a href="https://blog.sessionstack.com/how-javascript-works-inside-the-v8-engine-5-tips-on-how-to-write-optimized-code-ac089e62b12e">here</a>.
                     </p>
                 </li>
                 <li><b>Identify the underlying components of communication that will be used in your application.</b><br>
                     <p>High Level:</p>
-                    <p>&emsp; <br></p>
+                    <p>The user will communicate with our server by having to login using their credentials. Since we want to limit the usage of our application
+                        to only CSUB students, we want to find a way to autheticate whether or not the user is a student. The next form of communication a user will have is
+                        with other users. The flow of data would be the user logging into the chatroom, then data (the message) will be sent to the chatroom for all
+                        other users to see. A reach goal we would like to implement is another form of communication where the user can report any problems to an admin
+                        by submitting a ticket and having the ticket being responded by the admin.<br></p>
                     <p>Low Level:</p>
                     <p>Since we are using Flask as our framework for this web application, there is a Flask extension called flask-SocketIO that is 
                         based off the original SocketIO which is a JavaScript library. This Flask extension is widely used when creating a chat application

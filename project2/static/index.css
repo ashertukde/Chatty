@@ -3,3 +3,32 @@
     padding: 0px;
     box-sizing: border-box;
 }
+
+.loginForm {
+    margin-top: 100px;
+}
+
+form {
+    margin-left: 10rem;
+    margin-right: 10rem;    
+}
+
+form input {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+#chat {
+    padding: 10px;
+}
+
+.chatbox {
+    position: absolute;
+    top: 50;
+    bottom: 50;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    padding: 30px;
+}

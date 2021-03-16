@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% if title %}
+        <title>Chatty Room - {{ title }}</title>
+    {% else %}
+        <title>Chatty</title>
+    {% endif %}
+
+        <meta charset="utf-8">
+        <meta me="viewport"ontent="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{url_for('static', filename='index.css')}}">
+
+        <script src="//code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.2/socket.io.js"></script>
+
+        <script type="text/javascript" charset="utf-8">
+            var socket;
+            $(document).ready(function() {
+                socket = io.connect('http://' + document.domain + ":" + location.port + '/chat')
+
+                socket.on('connect', function() {
+                    socket.emit('join', {});
+                });
+
+                socket.on('status', function(data) {
+                    $("#chat").val($("#chat").val() + '*' + data.msg + '*\n');
+                    $("#chat").scrollTop($("#chat")[0].scrollHeight);
+                });
+
+                socket.on('message', function(data) {
+                    $("#chat").val($("#chat").val() + data.msg + "\n");
+                    $("#chat").scrollTop($("#chat")[0].scrollHeight);
+                });
+
+                $("#send").click(function(e) {
+                    var text = $("#chatmsg").val();
+                    $("#chatmsg").val('');
+                    socket.emit('text', {msg: text});
+                }); 
+                $("#chatmsg").keypress(function(e) {
+                    if(e.which == 13) {
+                        var text = $("#chatmsg").val();
+                        $("#chatmsg").val('');
+                        socket.emit('text', {msg: text});
+                    }
+                }); 
+            });
+
+            function leaveRoom() {
+                socket.emit('left', {}, function() {
+                    socket.disconnect(); 
+                    window.location.href = "{{ url_for('index') }}";
+                });
+            }
+        </script>
+    </head>
+    <body class="text-center">
+        <div class="chatbox">
+            <h2>Welcome to</h2>
+            <h2>Room: {{session['room']}}</h2><br>
+            <textarea name="" id="chat" cols="70" rows="10" placeholder="Seems empty... send a message!"></textarea><br><br>
+            <input type="text" name="" id="chatmsg" size="60" placeholder="Enter your message here">
+            <button type="button" id="send" class="btn btn-info">SEND</button><br><br>
+            <center> <button type="button" class="btn btn-danger" onclick=leaveRoom()>Leave Room</button> </center>
+        </div>
+    </body>
+</html>
