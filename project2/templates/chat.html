@@ -36,15 +36,19 @@
                 });
 
                 $("#send").click(function(e) {
-                    var text = $("#chatmsg").val();
-                    $("#chatmsg").val('');
-                    socket.emit('text', {msg: text});
-                }); 
-                $("#chatmsg").keypress(function(e) {
-                    if(e.which == 13) {
+                    if( $("#chatmsg").val()) {
                         var text = $("#chatmsg").val();
                         $("#chatmsg").val('');
                         socket.emit('text', {msg: text});
+                    }
+                }); 
+                $("#chatmsg").keypress(function(e) {
+                    if(e.which == 13) {
+                        if( $("#chatmsg").val()) {
+                            var text = $("#chatmsg").val();
+                            $("#chatmsg").val('');
+                            socket.emit('text', {msg: text});
+                        }
                     }
                 }); 
             });
@@ -58,10 +62,22 @@
         </script>
     </head>
     <body class="text-center">
-        <div class="chatbox">
-            <h2>Welcome to</h2>
-            <h2>Room: {{session['room']}}</h2><br>
-            <textarea name="" id="chat" cols="70" rows="10" placeholder="Seems empty... send a message!"></textarea><br><br>
+        <div class="container" id="chatBody">
+            <div class="row">
+                <div class="col">
+                    <h2>Welcome to</h2>
+                    <h2>Room: {{session['room']}}</h2><br>
+                    <textarea readonly name="" id="chat" cols="70" rows="10" placeholder="Seems empty... send a message!"></textarea><br><br>
+                </div>
+                
+                <div class="col">
+                    <h2>Members</h2>
+                    <h2>In Room:</h2>
+                    <textarea readonly name="" id="members" cols="30" rows="11"></textarea>
+                </div>
+            </div>
+            
+            
             <input type="text" name="" id="chatmsg" size="60" placeholder="Enter your message here">
             <button type="button" id="send" class="btn btn-info">SEND</button><br><br>
             <center> <button type="button" class="btn btn-danger" onclick=leaveRoom()>Leave Room</button> </center>

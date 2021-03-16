@@ -17,18 +17,26 @@ form input {
     margin-top: 30px;
     margin-bottom: 30px;
 }
-
-#chat {
-    padding: 10px;
+textarea {
+    resize: none;
 }
-
-.chatbox {
-    position: absolute;
-    top: 50;
-    bottom: 50;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 100%;
-    padding: 30px;
+#chatBody {
+    margin-top: 15vh;
+}
+#chatBox, #membersBox {
+    float: left;
+}
+#chat, #members {
+    padding: 10px;
+    border-radius: 15px;
+}
+#chat:focus, #chatmsg:focus, #members:focus {
+    outline: none;
+}
+#membersCol {
+    padding-left: 200px;
+}
+#chatmsg {
+    padding: 5px;
+    border-radius: 10px;
 }
