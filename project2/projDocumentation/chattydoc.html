@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chatty Document</title>
+
+        <meta charset="utf-8">
+        <meta me="viewport"ontent="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="chattydoc.css">
+    </head>
+    <body>
+        
+        <div class="header container">
+            <h1>Chatty Documentation</h1>
+            <h2>Project Contributers: Arvin Shertukde and Charles Bonoan</h2>
+        </div>
+
+        <div class="questions container">
+            <ol>    
+                <li><b>Identify the primary programming language used in your application.</b><br>
+                <p>For our application, we will be using two languages that will help us accomplish our goals. Since we are developing a chat application using a specific 
+                    framework, we will be using Python to develop the server side code and JavaScript to create our client side code.
+                </p>
+                </li>
+                <li><b>Are your languages compiled or interpreted?</b><br>
+                    <p>Python is an interpreted language meaning it generally runs slower than a compiled language such as C++ or Java. The Python interpreter is implemented in the C language.
+                        We can see this when we run our Python code a "__pychache__" folder is created. In this folder contains the binary files for our code with the extension ".pyc" meaning that 
+                        the code was interpreted with the C language. 
+                    </p>
+                    <p>JavaScript is also an interpreted language, but there are multiple interpreters, usually for each browser. For example, Google Chrome uses their 
+                        V8 engine that was created by Google using C++. The Mozilla Foundation created the Rhino engine that was developed entirely in Java. This is why
+                        JavaScript may behave differently in some browsers. More about JavaScript can be found <a href="https://blog.sessionstack.com/how-javascript-works-inside-the-v8-engine-5-tips-on-how-to-write-optimized-code-ac089e62b12e">here</a>.
+                    </p>
+                </li>
+                <li><b>Identify the underlying components of communication that will be used in your application.</b><br>
+                    <p>High Level:</p>
+                    <p>The user will communicate with our server by having to login using their credentials. Since we want to limit the usage of our application
+                        to only CSUB students, we want to find a way to autheticate whether or not the user is a student. The next form of communication a user will have is
+                        with other users. The flow of data would be the user logging into the chatroom, then data (the message) will be sent to the chatroom for all
+                        other users to see. A reach goal we would like to implement is another form of communication where the user can report any problems to an admin
+                        by submitting a ticket and having the ticket being responded by the admin.<br></p>
+                    <p>Low Level:</p>
+                    <p>Since we are using Flask as our framework for this web application, there is a Flask extension called flask-SocketIO that is 
+                        based off the original SocketIO which is a JavaScript library. This Flask extension is widely used when creating a chat application
+                        using the Flask framework. Since the application will need both a server and client side script, we will be creating the server code in Python and 
+                        the client code in JavaScript.<br></p>
+                </li>
+                <li><b>How "waiting" will work in our application:</b><br>
+                    <p>With the flask-SocketIO extension, waiting is handled within the extension meaning there is no need for infinite loops that wait for connection. Once the 
+                        server has started, the extension uses decorators (pictured below) to handle events such as incoming messages. Similarly, the client side, which will be 
+                        developed using the SocketIO extension of JavaScript.
+                    </p>
+                    <img src="assets/flask-socketioEx.PNG" alt="">
+                    <footer>Picture taken from <a href="https://flask-socketio.readthedocs.io/en/latest/">flask-SocketIO documentation</a>.</footer>
+                    <br>
+                    <p>As far as the client side, the JavaScript will use functions that listen on a URL and port, and will help us display the messages onto our
+                        HTML page. As long as the server is running, the client will always be waiting on a connection one the website is loaded. Pictured below is how
+                        the JavaScript will listen for certain events. 
+                    </p>
+                    <img src="assets/jsSocketIO.PNG" alt="" width="1000">
+                    <footer>Picture taken from <a href="https://socket.io/docs/v3/client-api/#socket-connected">SocketIO documentation</a>.</footer>
+                </li>
+            </ol>
+        </div>
+        
+    </body>
+</html>

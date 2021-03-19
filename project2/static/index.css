@@ -1,0 +1,42 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.loginForm {
+    margin-top: 100px;
+}
+
+form {
+    margin-left: 10rem;
+    margin-right: 10rem;    
+}
+
+form input {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+textarea {
+    resize: none;
+}
+#chatBody {
+    margin-top: 15vh;
+}
+#chatBox, #membersBox {
+    float: left;
+}
+#chat, #members {
+    padding: 10px;
+    border-radius: 15px;
+}
+#chat:focus, #chatmsg:focus, #members:focus {
+    outline: none;
+}
+#membersCol {
+    padding-left: 200px;
+}
+#chatmsg {
+    padding: 5px;
+    border-radius: 10px;
+}
