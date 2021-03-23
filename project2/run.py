@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_socketio import SocketIO, send, join_room, leave_room, emit
 from flask_session import Session
 from profanity_filter import ProfanityFilter
@@ -42,6 +42,7 @@ def chat():
         
         if room in memberlist:
             if username in memberlist[room]:
+                flash("Username has already been taken in this room. Please choose another!", 'danger')
                 return redirect(url_for('index'))
             memberlist[room].append(username)
         else:
