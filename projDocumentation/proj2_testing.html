@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta me="viewport"ontent="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    </head>
+    <body>
+        <div class="container" style="margin-top: 30px;">
+            <ol>
+                <h2>Author: Charles Bonoan</h2>
+                <h3>Project Testing</h3>
+                <br>
+                <br>
+                <li><b>Automated Test:</b></li>
+                <img src="assets/autoTestSourceCode.PNG" alt="">
+                <img src="assets/autoTesting1.PNG" alt="" width="1000">
+                <img src="assets/autoTesting2.PNG" alt="" width="1000">
+                <p>
+                    The source code shown above runs a test where it will open 10 different browsers that will log into our
+                    application with different users. For example, the picture shown below the source code was the result of 
+                    10 different users logging into the same room. The reason why we had to use selenium (python web scraping extension), 
+                    was because each browser that is created does not have cookies that will override the current in the same room. For 
+                    example, if two tabs were open in the same window and both logged into our application, the most recent login will override
+                    the other user and cause an error on our server.
+                </p>
+                <img src="assets/testStatus.PNG" alt="">
+                <p>
+                    The results of our test are shown above. As you can see, all the tests passed, and the way we determine a pass or fail is 
+                    if the user was able to login. The code is created to check to see if a user has successfully logged in by seeing if the chatroom
+                    page has loaded. We can even see that our members list was updating and all users were able to communicate with one another.
+                </p>
+                <p>
+                    Another test we ran was putting multiple same named users into the same room. Although this did not cause an error, we want to implement a way
+                    to 1) make it so no two users have the same name in the same room and 2) have each messager have their own distinct color so that each user
+                    can easily see who sent which message.
+                </p>
+                <img src="assets/autoTesting3.png" alt="" width="1000">
+                <br>
+                <br>
+                <li><b>Cause a failure:</b></li>
+                <img src="assets/failure.png" alt="" width="1000">
+                <p>
+                    A failure we found is that when a user disables their cookies in their browser, it causes an error because their session name is not saved as 
+                    well as the session room they want to join. At first we wanted to implement a way to where we give the user a default name such as "Guest", but 
+                    we found out that even when we did that, the session room was not being saved meaning the user had somehow logged into a room that does not 
+                    exist. Our solution is to implement a way to have the user enable their cookies before using our application.
+                </p>
+                <br>
+                <img src="assets/failure2.PNG" alt="" width="1000">
+                <p>
+                    Another failure we found was concerning users with their cookies enabled. Our application fails to logout a user when they close their browser, leaving 
+                    that user in the members list and technically still in the room. AS with the picture above, "user" should have given a message that they were leaving the 
+                    room. We count this as a failure because our members list is not updating correctly and also we do not know if the sockets are closing correctly which can
+                    cause problems.
+                </p>
+            </ol>
+        </div>
+    </body>
+</html>

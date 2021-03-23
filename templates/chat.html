@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% if title %}
+        <title>Chatty Room - {{ title }}</title>
+        {% else %}
+            <title>Chatty</title>
+        {% endif %}
+        <link rel="icon" type="image/jpg" href="{{url_for('static', filename='assets/chatIcon.jpg')}}">
+
+        <meta charset="utf-8">
+        <meta me="viewport"ontent="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{url_for('static', filename='index.css')}}">
+
+        <script src="//code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+        
+    </head>
+    <body class="text-center">
+        <div class="container" id="chatBody">
+            <div class="row">
+                <div class="col">
+                    <h2>Welcome to</h2>
+                    <h2>Room: {{session['room']}}</h2><br>
+                    <!-- <textarea readonly name="" id="chat" cols="70" rows="10" placeholder="Seems empty... send a message!"></textarea><br><br> -->
+                    <div contenteditable="false" id="chat" >
+                        <!-- <div style="text-align: left;">
+                            <span>hi</span>
+                        </div> -->
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <h2>Members</h2>
+                    <h2>In Room:</h2>
+                    <textarea readonly name="" id="members" cols="30" rows="11"></textarea>
+                </div>
+            </div>
+            
+            
+            <input type="text" name="" id="chatmsg" size="60" placeholder="Enter your message here">
+            <button type="button" id="send" class="btn btn-info">SEND</button><br><br>
+            <center> <button type="button" class="btn btn-danger" onclick=leaveRoom()>Leave Room</button> </center>
+        </div>
+
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+        <script type="text/javascript" charset="utf-8">
+            var socket;
+            $(document).ready(function() {
+                socket = io.connect(location.protocol + "//" + document.domain + ":" + location.port + "/chat")
+                
+                socket.on('connect', function() {
+                    socket.emit('join', {});
+                });
+                socket.on('memberlist', function(data){
+                    
+                    var i;
+                    $("#members").val('');
+                    for(i =0; i < data.msg.length;i++)
+                    { 
+                        $("#members").val($("#members").val() + data.msg[i] + '\n');  
+                    }
+                });
+                socket.on('status', function(data) {
+                    $("#chat").val($("#chat").val() + '*' + data.msg + '*\n');
+                    $("#chat").scrollTop($("#chat")[0].scrollHeight);
+                });
+
+                socket.on('message', function(data) {
+                    $("#chat").append("<div><span  style=' font-weight: bold; color:"+ data.color + ";'>" + data.username + "</span> <span>" + ": " + data.msg + "</span></div>")
+                    $("#chat").scrollTop($("#chat")[0].scrollHeight);
+                });
+
+                $("#send").click(function(e) {
+                    if( $("#chatmsg").val()) {
+                        var text = $("#chatmsg").val();
+                        $("#chatmsg").val('');
+                        socket.emit('text', {msg: text});
+                    }
+                }); 
+                $("#chatmsg").keypress(function(e) {
+                    if(e.which == 13) {
+                        if( $("#chatmsg").val()) {
+                            var text = $("#chatmsg").val();
+                            $("#chatmsg").val('');
+                            socket.emit('text', {msg: text});
+                        }
+                    }
+                }); 
+            });
+
+            function leaveRoom() {
+                socket.emit('left', {}, function() {
+                    socket.disconnect(); 
+                    window.location.href = "{{ url_for('index') }}";
+                });
+            }
+        </script>
+    </body>
+</html>
