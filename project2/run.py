@@ -39,7 +39,10 @@ def chat():
         # Generate a random color user will get for chat distinguishing purposes
         rand = lambda: random.randint(0,255)
         session['color'] = "#%02X%02X%02X" % (rand(), rand(), rand())
+        
         if room in memberlist:
+            if username in memberlist[room]:
+                return redirect(url_for('index'))
             memberlist[room].append(username)
         else:
             memberlist[room] = [username]
@@ -89,6 +92,18 @@ def left(message):
     session.clear()
     emit('status', {'msg': username + ' has left the room.'}, room=room)
     emit('memberlist', {'msg': memberlist[room]}, room=room)
+
+@socketio.on('disconnect', namespace='/chat')
+def test_disconnect():
+    room = session.get('room')
+    username = session.get('username')
+    memberlist[room].remove(username)
+    leave_room(room)
+    session.clear()
+    emit('status', {'msg': username + ' has left the room.'}, room=room)
+    emit('memberlist', {'msg': memberlist[room]}, room=room)
+    
+
 
 if __name__ == '__main__':
     #app.run()
