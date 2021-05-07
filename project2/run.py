@@ -30,8 +30,9 @@ def index():
 @app.route('/chat', methods=['GET','POST'])
 def chat():
     if(request.method=='POST'):
-        username = request.form['username']
-        room  = request.form['chatroom']
+        #username = request.form['username']
+        username = 'test'
+        room  = request.form['room']
         # Store data in session to use 
         # when user is in chat room
         session['username'] = username

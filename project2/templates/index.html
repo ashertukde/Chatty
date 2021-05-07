@@ -10,26 +10,34 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="{{url_for('static', filename='index.css')}}">
 
+        <script src="//code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
     </head>
     <body>
         <div class="loginForm text-center container">
             <form class="form-signin" method="POST" action="{{url_for('chat')}}">
                 <h1>Welcome to Chatty!</h1>
-                <h2>Please Sign In Below</h2>
-                <label for="inputUsername" class="sr-only">Username</label>
-                <input type="text" id="inputUsername" name="username" class="form-control" placeholder="Username" required="" autofocus="">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                            <div class=" text-center alert alert-{{ category }}">
-                                {{ message }}
+                <h2>Choose a room below to start chatting!</h2>
+
+                <div class="chatRooms container text-center">
+                    <div class="row">
+                        <div class="col col-6">
+                            <div class="list-group">
+                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Yosemite">Yosemite</button>
+                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Sequoia">Sequoia</button>
+                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Redwood">Redwood</button>
                             </div>
-                        {% endfor %}
-                    {% endif %}
-                {%endwith%}
-                <label for="chatRoomName" class="sr-only">Chat Room Name</label>
-                <input type="text" id="chatRoomName" name="chatroom" class="form-control" placeholder="Chat Room Name" required="" >
-                <button class="btn btn-lg btn-primary btn-block" type="submit" value="submit">Join Room</button>
+                        </div>
+                        <div class="col col-6">
+                            <div class="list-group">
+                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Kings Canyon">Kings Canyon</button>
+                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Mojave">Mojave</button>
+                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Joshua Tree">Joshua Tree</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
             </form>
         </div>
     </body>
