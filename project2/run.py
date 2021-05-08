@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from flask_socketio import SocketIO, send, join_room, leave_room, emit
 from flask_session import Session
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import login_required
 from profanity_filter import ProfanityFilter
 import sys
 import random
@@ -22,16 +24,25 @@ numOfMessages = {}
 # Have messages be distinguishable
 
 @app.route('/index', methods=['GET','POST'])
-@app.route('/login', methods=['GET','POST'])
 @app.route('/', methods=['GET','POST'])
 def index():
     return render_template('index.html')
 
+@app.route('/signup', methods=['POST'])
+def signup():
+    username = request.form['username']
+    password = request.form['password']
+
+@app.route('/login', methods=['POST'])
+def login():
+    username = request.form['username']
+    password = request.form['password']
+
+
 @app.route('/chat', methods=['GET','POST'])
+@login_required
 def chat():
     if(request.method=='POST'):
-        #username = request.form['username']
-        username = 'test'
         room  = request.form['room']
         # Store data in session to use 
         # when user is in chat room

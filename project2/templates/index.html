@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html>
+
     <head>
-        <title>Chatty</title>
+        {% if title %}
+        <title>Chatty Room - {{ title }}</title>
+        {% else %}
+            <title>Chatty</title>
+        {% endif %}
         <link rel="icon" type="image/jpg" href="{{url_for('static', filename='assets/chatIcon.jpg')}}">
 
         <meta charset="utf-8">
@@ -9,36 +14,58 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="{{url_for('static', filename='index.css')}}">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
 
         <script src="//code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
+        
     </head>
-    <body>
-        <div class="loginForm text-center container">
-            <form class="form-signin" method="POST" action="{{url_for('chat')}}">
-                <h1>Welcome to Chatty!</h1>
-                <h2>Choose a room below to start chatting!</h2>
 
-                <div class="chatRooms container text-center">
-                    <div class="row">
-                        <div class="col col-6">
-                            <div class="list-group">
-                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Yosemite">Yosemite</button>
-                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Sequoia">Sequoia</button>
-                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Redwood">Redwood</button>
-                            </div>
+    <body>
+        <div class="indexForm container-fluid text-center">
+            <h1>Welcome to</h1>
+            <h1 style=" font-weight: bold;">chatty</h1>
+            <br>
+            <div class="row justify-content-center">
+                <!-- Login column -->
+                <div class="col col-6" id="login">
+                    <h5>Have an account already?</h5>
+                    <form action="POST" action="{{url_for('login')}}">
+                        <div class="form-group">
+                            <input type="text" placeholder="Username" class="form-control" name="username" required>
                         </div>
-                        <div class="col col-6">
-                            <div class="list-group">
-                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Kings Canyon">Kings Canyon</button>
-                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Mojave">Mojave</button>
-                                <button type="submit" class="list-group-item list-group-item-action" name="room" value="Joshua Tree">Joshua Tree</button>
-                            </div>
+                        <div class="form-group">
+                            <input type="password" placeholder="Password" class="form-control" name="password" required>
                         </div>
-                    </div>
+                        <button type="submit" class="btn btn-primary btn-block"><b>Login</b></button>
+                    </form>
                 </div>
-                <br>
-            </form>
+
+                <!-- Sign up column -->
+                <div class="col col-6" id="signUp">
+                    <h5>Sign up and start chatting!</h5>
+                    <form action="POST" action="{{url_for('signup')}}">
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <input type="text" placeholder="First Name" class="form-control" name="fName" id="" required>
+                            </div>
+                            <div class="form-group col">
+                                <input type="text" placeholder="Last Name" class="form-control" name="lName" id="" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Username" class="form-control" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" placeholder="Password" class="form-control" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block"><b>Sign Up</b></button>
+                    </form>
+                </div>
+            </div>
         </div>
+        
     </body>
+
 </html>
