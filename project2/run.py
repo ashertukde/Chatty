@@ -6,6 +6,8 @@ from flask_login import login_required
 from profanity_filter import ProfanityFilter
 import sys
 import random
+import sqlite3
+import database
 
 app = Flask(__name__)
 app.debug = True
@@ -30,13 +32,33 @@ def index():
 
 @app.route('/signup', methods=['POST'])
 def signup():
+    connection = database.connect()
+    database.create_tables(connection)
+    fName = request.form['fName']
+    lName = request.form['lName']
     username = request.form['username']
     password = request.form['password']
+    unique = database.add_user(connection, fName, lName, username, password)
+    if unique:
+        return render_template('index.html', unique=unique)
+    else:
+        notunique = True
+        return render_template('index.html', notunique=notunique)
+
+    
+
 
 @app.route('/login', methods=['POST'])
 def login():
+    connection = database.connect()
     username = request.form['username']
     password = request.form['password']
+    verified = database.verify_user(connection, username, password);
+    if verified:
+        return render_template('index.html', verified=verified)
+    else:
+        notverified = True
+        return render_template('index.html', notverified=notverified)
 
 
 @app.route('/chat', methods=['GET','POST'])
