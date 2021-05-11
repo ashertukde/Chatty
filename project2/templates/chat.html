@@ -54,6 +54,12 @@
                 socket.on('connect', function() {
                     socket.emit('join', {});
                 });
+
+                socket.on('error', function() {
+                    console.log('Error occured while connecting.');
+                    window.location.href = "{{ url_for('index') }}";
+                });
+
                 socket.on('memberlist', function(data){
                     
                     var i;
@@ -80,6 +86,7 @@
                         socket.emit('text', {msg: text});
                     }
                 }); 
+                
                 $("#chatmsg").keypress(function(e) {
                     if(e.which == 13) {
                         if( $("#chatmsg").val()) {
@@ -93,8 +100,8 @@
 
             function leaveRoom() {
                 socket.emit('left', {}, function() {
-                    socket.disconnect(); 
-                    window.location.href = "{{ url_for('index') }}";
+                    //socket.disconnect(); 
+                    window.location.href = "{{ url_for('rooms') }}";
                 });
             }
         </script>

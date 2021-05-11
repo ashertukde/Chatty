@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% if title %}
+        <title>Chatty Room - {{ title }}</title>
+        {% else %}
+            <title>Chatty</title>
+        {% endif %}
+        <link rel="icon" type="image/jpg" href="{{url_for('static', filename='assets/chatIcon.jpg')}}">
+
+        <meta charset="utf-8">
+        <meta me="viewport"ontent="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{url_for('static', filename='500.css')}}">
+
+        <script src="//code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div class="container" id="errMsg">
+            <h1>Oops! Something went wrong on our end...</h1>
+            <br>
+            <h3>It's not you. It's us. Please go back to the <a href="{{url_for('index')}}">login page</a> and try again.</h3>
+        </div>
+    </body>
+</html>

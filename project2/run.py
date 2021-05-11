@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_socketio import SocketIO, send, join_room, leave_room, emit
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import login_required
 
 from profanity_filter import ProfanityFilter
 import sys
@@ -14,11 +16,16 @@ app = Flask(__name__)
 app.debug = True
 app.config['SECRET_KEY'] = 'secretKey'
 app.config['SESSION_TYPE'] = 'filesystem'
+
 connection = database.connect()
 database.create_tables(connection)
+
+bcrypt = Bcrypt(app)
+
 Session(app)
 socketio = SocketIO(app, manage_session=False)
-memberlist = {}
+
+memberlist = {'Yosemite': [], 'Sequoia':[], 'Redwood':[], 'Kings Canyon':[],'Mojave':[],'Joshua Tree':[]}
 numOfMessages = {}
 #pf = ProfanityFilter()
 # TODO
@@ -42,15 +49,13 @@ def signup():
         lName = request.form['lName']
         username = request.form['username']
         password = request.form['password']
-        unique = database.add_user(connection, fName, lName, username, password,)
+        unique = database.add_user(connection, fName, lName, username, password)
         if unique:
             return render_template('index.html', unique=unique)
         else:
             notunique = True
             return render_template('index.html', notunique=notunique)
     return render_template('index.html')
-    
-
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -61,12 +66,17 @@ def login():
         verified = database.verify_user(connection, username, password)
         if verified:
             session['username'] = username
-            
-            return render_template('rooms.html')
+
+            return redirect(url_for('rooms'))
         else:
             notverified = True
             return render_template('index.html', notverified=notverified)
     return render_template('index.html')
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    return redirect(url_for('index'))
+
 @app.route('/rooms', methods=['GET','POST'])
 def rooms():
     if(request.method=='POST'):
@@ -136,6 +146,7 @@ def rooms():
                 temp = c.fetchall()
                 #print(temp)
     return render_template('rooms.html') 
+
 @app.route('/friendslist', methods=['GET' , 'POST'])
 def friendslist():            
         conn = sqlite3.connect("users.db")
@@ -172,19 +183,15 @@ def chat():
         room  = request.form['room']
         # Store data in session to use 
         # when user is in chat room
-        username = session['username']
+        username = session.get('username')
+        print(f"{username} {room}")
         session['room'] = room
         # Generate a random color user will get for chat distinguishing purposes
         rand = lambda: random.randint(0,255)
         session['color'] = "#%02X%02X%02X" % (rand(), rand(), rand())
+
+        memberlist[room].append(username)
         
-        if room in memberlist:
-            if username in memberlist[room]:
-                flash("Username has already been taken in this room. Please choose another!", 'danger')
-                return redirect(url_for('index'))
-            memberlist[room].append(username)
-        else:
-            memberlist[room] = [username]
         return render_template('chat.html', session=session, title=room)
     else:
         if session.get('username') is not None:
@@ -192,7 +199,12 @@ def chat():
             return render_template('chat.html', session=session, title=room)
         else:
             return redirect(url_for('index'))
-    
+
+@app.errorhandler(503)
+@app.errorhandler(500)
+def error_500(error):
+    return render_template('500.html')
+
 # Namespace is the file we want to execute the function on
 @socketio.on('join', namespace='/chat')
 def join(message):
@@ -200,35 +212,26 @@ def join(message):
     join_room(room)
     #members list won't keep track of someone logging in without cookies
     if session.get('username'):
-        emit('status', {'msg': session.get('username') + ' has entered the room. Say hi!'}, room=room)
+        #emit('status', {'msg': session.get('username') + ' has entered the room. Say hi!'}, room=room)
         emit('memberlist', {'msg': memberlist[room]}, room=room)
     else:
-        emit('status', {'msg': 'Guest has entered the room. Say hi!'}, room=room)
-    
+        flash('Server error. Please login again.', 'danger')
+        return redirect(url_for('index'))    
 
 @socketio.on('text', namespace='/chat')
 def text(message):
     room = session.get('room')
     print('Message: ' + message['msg'])
-    # Check if message is appropriate
-    # if pf.is_clean(message['msg']):
-    #     if session.get('username'):
-    #         emit('message', {'msg': session.get('username') + ': ' + message['msg']}, room=room)
-    #     else:
-    #         emit('message',{'msg': 'Guest: ' + message['msg']}, room=room)
-    # else:
-    #     emit('message', {'msg': 'Detected foul language. Please keep messages clean!'}, broadcast=False, include_self=True)
     emit('message', {'color': session.get('color'), 'username': session.get('username'), 'msg': message['msg']}, room=room)
 
-    
 
 @socketio.on('left', namespace='/chat')
 def left(message):
     room = session.get('room')
     username = session.get('username')
     memberlist[room].remove(username)
+
     leave_room(room)
-    
     emit('status', {'msg': username + ' has left the room.'}, room=room)
     emit('memberlist', {'msg': memberlist[room]}, room=room)
 
@@ -238,13 +241,10 @@ def test_disconnect():
     username = session.get('username')
     memberlist[room].remove(username)
     leave_room(room)
-    
     emit('status', {'msg': username + ' has left the room.'}, room=room)
     emit('memberlist', {'msg': memberlist[room]}, room=room)
     
-
-
     
 if __name__ == '__main__':
     #app.run()
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=False)

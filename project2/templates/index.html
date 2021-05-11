@@ -23,11 +23,19 @@
     </head>
 
     <body>
-        
         <div class="indexForm container-fluid text-center">
             <h1>Welcome to</h1>
             <h1 style=" font-weight: bold;">chatty</h1>
             <br>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class=" text-center alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {%endwith%}
             <div class="row justify-content-center">
                 <!-- Login column -->
                 <div class="col col-6" id="login">
@@ -49,10 +57,10 @@
                     <form method="POST" action="{{url_for('signup')}}">
                         <div class="form-row">
                             <div class="form-group col">
-                                <input type="text" placeholder="First Name" class="form-control" name="fName" id="" required>
+                                <input type="text" placeholder="First Name" class="form-control" name="fName" required>
                             </div>
                             <div class="form-group col">
-                                <input type="text" placeholder="Last Name" class="form-control" name="lName" id="" required>
+                                <input type="text" placeholder="Last Name" class="form-control" name="lName" required>
                             </div>
                         </div>
                         <div class="form-group">
@@ -79,7 +87,7 @@
 			<div>Login failed! Invalid username or password!</div>
 			{% endif %}
         </div>
-        
+
     </body>
 
 </html>
