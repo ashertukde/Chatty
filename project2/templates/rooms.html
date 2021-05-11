@@ -9,11 +9,16 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="{{url_for('static', filename='chat.css')}}">
-
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <script src="//code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
     </head>
     <body>
+        <div class="topnav">
+            <a href="{{url_for('friendslist')}}">friendslist</a>
+            <a class="active" href="{{url_for('rooms')}}">rooms</a>
+            
+          </div>
         <div class="roomForm text-center container">
             <form class="form-signin" method="POST" action="{{url_for('chat')}}">
                 <h2>Choose a room below to start chatting!</h2>

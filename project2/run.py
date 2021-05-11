@@ -1,17 +1,21 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+
 from flask_socketio import SocketIO, send, join_room, leave_room, emit
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_required
+
 from profanity_filter import ProfanityFilter
 import sys
 import random
+import sqlite3
+import database
 
 app = Flask(__name__)
 app.debug = True
 app.config['SECRET_KEY'] = 'secretKey'
 app.config['SESSION_TYPE'] = 'filesystem'
-
+connection = database.connect()
+database.create_tables(connection)
 Session(app)
 socketio = SocketIO(app, manage_session=False)
 memberlist = {}
@@ -23,6 +27,7 @@ numOfMessages = {}
 # Make sure no two members in the same room have the same name
 # Have messages be distinguishable
 
+
 @app.route('/index', methods=['GET','POST'])
 @app.route('/', methods=['GET','POST'])
 def index():
@@ -30,23 +35,144 @@ def index():
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    username = request.form['username']
-    password = request.form['password']
+    if(request.method=='POST'):
+        connection = database.connect()
+        database.create_tables(connection)
+        fName = request.form['fName']
+        lName = request.form['lName']
+        username = request.form['username']
+        password = request.form['password']
+        unique = database.add_user(connection, fName, lName, username, password,)
+        if unique:
+            return render_template('index.html', unique=unique)
+        else:
+            notunique = True
+            return render_template('index.html', notunique=notunique)
+    return render_template('index.html')
+    
+
 
 @app.route('/login', methods=['POST'])
 def login():
-    username = request.form['username']
-    password = request.form['password']
+    if(request.method=='POST'):
+        connection = database.connect()
+        username = request.form['username']
+        password = request.form['password']
+        verified = database.verify_user(connection, username, password)
+        if verified:
+            session['username'] = username
+            
+            return render_template('rooms.html')
+        else:
+            notverified = True
+            return render_template('index.html', notverified=notverified)
+    return render_template('index.html')
+@app.route('/rooms', methods=['GET','POST'])
+def rooms():
+    if(request.method=='POST'):
+        
+        print(request.form)
+        conn = sqlite3.connect('users.db')
+        c = conn.cursor()
+        c.execute("SELECT * FROM users WHERE uname=? ",(session['username'],))
+        user_id = c.fetchone()
+        if 'friend' in request.form:
+            #print("friend")
+            value,user_name = request.form['friend'].split(" ", 1) 
+            
+            if value == "accepted":
+                c.execute("SELECT * FROM users WHERE uname=? ",(user_name,))
+                temp_id = c.fetchone()
+                c.execute("DELETE FROM friends_request WHERE user_id=? and requester_id=?",(int(user_id[0]),int(temp_id[0])))
+                c.execute("SELECT * FROM friends WHERE user_id=? and friend_id=?",(int(user_id[0]),int(temp_id[0])))
+                checker = c.fetchone()
+                
+                if(checker == None):
+                    c.execute("INSERT INTO friends VALUES(?,?)",(int(user_id[0]),int(temp_id[0])))
+                    conn.commit()
+                    c.execute("INSERT INTO friends VALUES(?,?)",(int(temp_id[0]),int(user_id[0])))
+                    conn.commit()
 
+            else:
+                c.execute("SELECT * FROM users WHERE uname=? ",(user_name,))
+                temp_id = c.fetchone()
+                c.execute("DELETE FROM friends_request WHERE user_id=? and requester_id=?",(int(user_id[0]),int(temp_id[0])))
+                conn.commit()
+            
+           
+                
+        if 'deleting' in request.form:
+            #print("deleting")
+            c.execute("SELECT * FROM friends WHERE user_id=? ",(user_id[0],))
+            temp_id = c.fetchone()
+            #print(temp_id)
+            value,user_name = request.form['deleting'].split(" ", 1)
+            c.execute("SELECT * FROM users WHERE uname=? ",(user_name,))
+            temp_id = c.fetchone() 
+            c.execute("DELETE FROM friends WHERE user_id=? and friend_id=?",(int(user_id[0]),int(temp_id[0])))
+            conn.commit()
+            c.execute("DELETE FROM friends WHERE user_id=? and friend_id=?",(int(temp_id[0]),int(user_id[0])))
+            conn.commit()
+            c.execute("SELECT * FROM friends WHERE user_id=? ",(user_id[0],))
+            temp_id = c.fetchone()
+            #print(temp_id)
+            
+        if 'add' in request.form:
+            c.execute("SELECT * FROM users WHERE uname=? ",(request.form['add'],))
+            temp_id = c.fetchone()
+            if temp_id != None:
+                
+                c.execute("SELECT * FROM friends_request WHERE user_id=? and requester_id=?",(int(temp_id[0]),int(user_id[0])))
+                checker = c.fetchone()
+                c.execute("SELECT * FROM friends_request WHERE user_id=? and requester_id=?",(int(user_id[0]),int(temp_id[0])))
+                checker2 = c.fetchone()
+                c.execute("SELECT * FROM friends WHERE user_id=? and friend_id=?",(int(user_id[0]),int(temp_id[0])))
+                checker3 = c.fetchone()
+                if(checker == None) and (checker2 == None) and (checker3 == None) and (user_id[0] != temp_id[0]):
+                    #print("hi")
+                    c.execute("INSERT INTO friends_request VALUES(?,?)",(int(temp_id[0]),int(user_id[0])))
+                    conn.commit()
+                c.execute("SELECT * FROM friends_request")
+                temp = c.fetchall()
+                #print(temp)
+    return render_template('rooms.html') 
+@app.route('/friendslist', methods=['GET' , 'POST'])
+def friendslist():            
+        conn = sqlite3.connect("users.db")
+        c = conn.cursor()
+        c.execute("SELECT * FROM users WHERE uname=? ",(session['username'],))
+        user_id = c.fetchone()           
+        c.execute("SELECT * FROM friends_request WHERE user_id=?",(int(user_id[0]),))
+        friends = c.fetchall()
+        friends_array = []
+        for friend in friends:            
+            friends_array.append(friend[1])
+        friends_request = []
+        for ids in friends_array:
+            c.execute("SELECT * FROM users WHERE id=?",(ids,))
+            temp = c.fetchone()
+            friends_request.append(temp[3])
+        c.execute("SELECT * FROM friends WHERE user_id=?",(int(user_id[0]),))
+        friends = c.fetchall()
+        friends_array = []
+        friends_accepted = []
+        for friend in friends:            
+            friends_array.append(friend[1])
+        for ids in friends_array:
+            c.execute("SELECT * FROM users WHERE id=?",(ids,))
+            temp = c.fetchone()
+            print(temp[3])
+            friends_accepted.append(temp[3])
+        conn.close()
+        return render_template('friendslist.html', friends_request=friends_request, friends_accepted=friends_accepted)    
 
 @app.route('/chat', methods=['GET','POST'])
-@login_required
 def chat():
     if(request.method=='POST'):
         room  = request.form['room']
         # Store data in session to use 
         # when user is in chat room
-        session['username'] = username
+        username = session['username']
         session['room'] = room
         # Generate a random color user will get for chat distinguishing purposes
         rand = lambda: random.randint(0,255)
@@ -102,7 +228,7 @@ def left(message):
     username = session.get('username')
     memberlist[room].remove(username)
     leave_room(room)
-    session.clear()
+    
     emit('status', {'msg': username + ' has left the room.'}, room=room)
     emit('memberlist', {'msg': memberlist[room]}, room=room)
 
@@ -112,12 +238,13 @@ def test_disconnect():
     username = session.get('username')
     memberlist[room].remove(username)
     leave_room(room)
-    session.clear()
+    
     emit('status', {'msg': username + ' has left the room.'}, room=room)
     emit('memberlist', {'msg': memberlist[room]}, room=room)
     
 
 
+    
 if __name__ == '__main__':
     #app.run()
     socketio.run(app, debug=True)

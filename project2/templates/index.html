@@ -23,6 +23,7 @@
     </head>
 
     <body>
+        
         <div class="indexForm container-fluid text-center">
             <h1>Welcome to</h1>
             <h1 style=" font-weight: bold;">chatty</h1>
@@ -31,7 +32,7 @@
                 <!-- Login column -->
                 <div class="col col-6" id="login">
                     <h5>Have an account already?</h5>
-                    <form action="POST" action="{{url_for('login')}}">
+                    <form method="POST" action="{{url_for('login')}}">
                         <div class="form-group">
                             <input type="text" placeholder="Username" class="form-control" name="username" required>
                         </div>
@@ -45,7 +46,7 @@
                 <!-- Sign up column -->
                 <div class="col col-6" id="signUp">
                     <h5>Sign up and start chatting!</h5>
-                    <form action="POST" action="{{url_for('signup')}}">
+                    <form method="POST" action="{{url_for('signup')}}">
                         <div class="form-row">
                             <div class="form-group col">
                                 <input type="text" placeholder="First Name" class="form-control" name="fName" id="" required>
@@ -64,6 +65,19 @@
                     </form>
                 </div>
             </div>
+			{% if unique %}
+			<div>Signup Success! Login now!</div>
+			{% endif %}
+			{% if notunique%}
+			<div>Signup Failed! Username taken!</div>
+			{% endif %}
+			
+			{% if verified %}
+			<div>Login success!</div>
+			{% endif %}
+			{% if notverified %}
+			<div>Login failed! Invalid username or password!</div>
+			{% endif %}
         </div>
         
     </body>

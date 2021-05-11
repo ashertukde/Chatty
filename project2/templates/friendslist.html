@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Chatty</title>
+        <link rel="icon" type="image/jpg" href="{{url_for('static', filename='assets/chatIcon.jpg')}}">
+
+        <meta charset="utf-8">
+        <meta me="viewport"ontent="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" 
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{url_for('static', filename='chat.css')}}">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <script src="//code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    </head>
+    <body >
+        <div class="topnav">
+            <a class="active" href="{{url_for('friendslist')}}">friendslist</a>
+            <a href="{{url_for('rooms')}}">rooms</a>
+            
+          </div>
+          
+        <div class="roomForm text-center container">
+           
+            <div class = "form-signin">
+                <h2>Friendslist</h2>
+                <div class="chatRooms container text-center">
+               
+                    <div class="list-group">
+                        <form method="POST" action="{{url_for('rooms')}}" id = "myForm">
+                        {% for friend in friends_request %}
+                        
+                            <div>{{friend}} has sent you a friend request: <button type="submit"  value="accepted {{friend}}" name="friend" class="w3-button ">Accept</button>
+                                <button type="submit"   value="declined {{friend}}" name="friend" class="w3-button ">Decline</button>
+                            </div>
+                       
+                         {% endfor %}
+                         {% for friend in friends_accepted %}
+                         <div>
+                             {{friend}} is your friend: <button type="submit"  value="declined {{friend}}" name="deleting" class="w3-button ">Delete</button>
+                         </div>
+                         {% endfor %}
+                         <input type="text" placeholder="Enter a username"  name="add">
+                         <button type="submit"  >Send Friend Request</button>
+                         </form>
+                    </div>
+                    
+                
+                </div>
+            </div>
+        </div>
+       
+    </body>
+</html>
